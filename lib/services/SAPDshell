@@ -1,0 +1,4 @@
+class Service::SAPDshell < Service
+  def receive_push
+  end
+end
