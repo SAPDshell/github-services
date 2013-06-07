@@ -1,4 +1,4 @@
-class Service::SAPDshell < Service
+class Service::SAPDshell < Service::HttpPost
   string   :dshell_url, :user_id
   password :password
 
