@@ -15,21 +15,21 @@ class Service::SAPDshell < Service::HttpPost
                :email => 'dshell@sap.com'
         
 
-  def receive_push
+  def receive_event
     
     # Check for settings
-    if data['dshell_url'].to_s.empty?
+    if  required_config_value('dshell_url').to_s.empty?
       raise_config_error "SAP Dshell URL not set"
     end
-    if data['user_id'].to_s.empty?
+    if  required_config_value('user_id').to_s.empty?
       raise_config_error "User id not set"
     end
-    if data['password'].to_s.empty?
+    if  required_config_value('password').to_s.empty?
       raise_config_error "Password not set"
     end
     
     # Sets this basic auth info for every request.
-    http.basic_auth(data['user_id'], data['password'])
+    http.basic_auth( required_config_value('user_id'),  required_config_value('password'))
     
     http.headers['Content-Type'] = 'application/json'
     
@@ -38,11 +38,12 @@ class Service::SAPDshell < Service::HttpPost
     
     
     l_repository = payload['repository']['url'].to_s
-    l_dshell_url = data['dshell_url']
+    l_dshell_url =  required_config_value('dshell_url')
     
     l_call_url =  "#{l_dshell_url}/?repo=#{l_repository}"
-      
-    res = http_post l_call_url, generate_json(payload)
+     
+    res = deliver l_call_url
+    
 
     if res.status < 200 || res.status > 299
       raise_config_error "Failed with #{res.status}"
